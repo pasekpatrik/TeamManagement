@@ -1,4 +1,4 @@
-package cz.cvut.fel.teammanagement.model;
+package cz.cvut.fel.teammanagement.enums;
 
 public enum SportType {
     FOOTBALL,

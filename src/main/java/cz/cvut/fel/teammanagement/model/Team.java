@@ -1,12 +1,15 @@
 package cz.cvut.fel.teammanagement.model;
 
+import cz.cvut.fel.teammanagement.enums.SportType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-@Entity @Getter @Setter
+@Entity
+@Getter
+@Setter
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
