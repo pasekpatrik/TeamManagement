@@ -10,11 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Team {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-
+public class Team extends AbstractEntity{
     @Column(nullable = false)
     private String name;
 
@@ -27,4 +23,16 @@ public class Team {
 
     @ManyToMany
     private List<User> users;
+
+    @OneToMany
+    private List<Event> events;
+
+    @OneToMany
+    private List<Match> matches;
+
+    @OneToMany
+    private List<Document> documents;
+
+    @OneToMany
+    private List<Image> images;
 }

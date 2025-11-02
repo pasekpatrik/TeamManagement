@@ -10,11 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-
+public class User extends AbstractEntity {
     @Column(nullable = false)
     private String firstName;
 
@@ -31,4 +27,10 @@ public class User {
 
     @ManyToMany(mappedBy = "users")
     private List<Team> teams;
+
+    @OneToMany(mappedBy = "user")
+    private List<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private List<Attendance> attendances;
 }
