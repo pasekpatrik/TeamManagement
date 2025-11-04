@@ -1,7 +1,9 @@
 package cz.cvut.fel.teammanagement.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -10,7 +12,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class User extends AbstractEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Account extends AbstractEntity {
     @Column(nullable = false)
     private String firstName;
 
@@ -25,12 +29,12 @@ public class User extends AbstractEntity {
     @Column(nullable = false)
     private LocalDate birthday;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "accounts")
     private List<Team> teams;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "account")
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "account")
     private List<Attendance> attendances;
 }

@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement;
 
+import cz.cvut.fel.teammanagement.model.File;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

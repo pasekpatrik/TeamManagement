@@ -14,5 +14,5 @@ public class Role extends AbstractEntity {
     private RoleType roleType;
 
     @ManyToOne
-    private User user;
+    private Account account;
 }

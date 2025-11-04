@@ -22,7 +22,7 @@ public class Team extends AbstractEntity{
     private SportType sportType;
 
     @ManyToMany
-    private List<User> users;
+    private List<Account> accounts;
 
     @OneToMany
     private List<Event> events;

@@ -14,7 +14,7 @@ public class Attendance extends AbstractEntity {
     private StatusType statusType;
 
     @ManyToOne
-    private User user;
+    private Account account;
 
     @ManyToOne
     private Event event;
