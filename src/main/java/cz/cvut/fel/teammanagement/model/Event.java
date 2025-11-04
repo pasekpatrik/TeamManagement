@@ -13,26 +13,27 @@ import java.util.List;
 @Getter
 @Setter
 public class Event extends AbstractEntity {
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(nullable = false)
+    @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "event_type", nullable = false)
     private EventType eventType;
 
     @ManyToOne
+    @JoinColumn(name = "team_id")
     private Team team;
 
     @OneToMany(mappedBy = "event")

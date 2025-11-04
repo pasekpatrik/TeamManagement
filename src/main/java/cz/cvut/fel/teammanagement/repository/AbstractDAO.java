@@ -18,7 +18,7 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
         this.type = type;
     }
 
-    public T find(Integer id) {
+    public T find(long id) {
         Objects.requireNonNull(id);
         return em.find(type, id);
     }

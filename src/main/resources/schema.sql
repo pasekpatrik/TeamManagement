@@ -1,83 +1,84 @@
-DROP TABLE IF EXISTS ATTENDANCE;
-DROP TABLE IF EXISTS ROLE;
-DROP TABLE IF EXISTS ACCOUNT_TEAM;
-DROP TABLE IF EXISTS ACCOUNT;
-DROP TABLE IF EXISTS TEAM;
-DROP TABLE IF EXISTS EVENT;
-DROP TABLE IF EXISTS MATCH;
-DROP TABLE IF EXISTS FILE;
+drop table if exists attendance;
+drop table if exists role;
+drop table if exists account_team;
+drop table if exists account;
+drop table if exists team;
+drop table if exists event;
+drop table if exists match;
+drop table if exists file;
 
-CREATE TABLE ACCOUNT (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    firstName VARCHAR(255),
-    lastName VARCHAR(255),
-    email VARCHAR(255) UNIQUE,
-    phone VARCHAR(255),
-    birthday DATE
+create table account (
+    id bigint primary key auto_increment,
+    first_name varchar(255),
+    last_name varchar(255),
+    email varchar(255) unique,
+    phone varchar(255),
+    birthday date
 );
 
-CREATE TABLE TEAM (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255),
-    city VARCHAR(255),
-    sportType VARCHAR(255)
+create table team (
+    id bigint primary key auto_increment,
+    name varchar(255),
+    city varchar(255),
+    sport_type varchar(255)
 );
 
-CREATE TABLE ACCOUNT_TEAM (
-    account_id BIGINT NOT NULL,
-    team_id BIGINT NOT NULL,
-    PRIMARY KEY (account_id, team_id),
-    FOREIGN KEY (account_id) REFERENCES ACCOUNT(id),
-    FOREIGN KEY (team_id) REFERENCES TEAM(id)
+create table account_team (
+    account_id bigint not null,
+    team_id bigint not null,
+    primary key (account_id, team_id),
+    foreign key (account_id) references account(id),
+    foreign key (team_id) references team(id)
 );
 
-CREATE TABLE ROLE (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    roleType VARCHAR(255),
-    account_id BIGINT,
-    FOREIGN KEY (account_id) REFERENCES ACCOUNT(id)
+create table role (
+    id bigint primary key auto_increment,
+    role_type varchar(255),
+    account_id bigint,
+    foreign key (account_id) references account(id)
 );
 
-CREATE TABLE EVENT (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255),
-    startDate DATE,
-    startTime TIME,
-    city VARCHAR(255),
-    address VARCHAR(255),
-    eventType VARCHAR(255),
-    team_id BIGINT,
-    FOREIGN KEY (team_id) REFERENCES TEAM(id)
+create table event (
+    id bigint primary key auto_increment,
+    name varchar(255),
+    start_date date,
+    start_time time,
+    city varchar(255),
+    address varchar(255),
+    event_type varchar(255),
+    team_id bigint,
+    foreign key (team_id) references team(id)
 );
 
-CREATE TABLE MATCH (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    startDate DATE,
-    startTime TIME,
-    city VARCHAR(255),
-    address VARCHAR(255),
-    teamScore INT,
-    opponentName VARCHAR(255),
-    opponentPhone VARCHAR(255),
-    opponentScore INT,
-    team_id BIGINT,
-    FOREIGN KEY (team_id) REFERENCES TEAM(id)
+create table match (
+    id bigint primary key auto_increment,
+    start_date date,
+    start_time time,
+    city varchar(255),
+    address varchar(255),
+    team_score int,
+    opponent_name varchar(255),
+    opponent_phone varchar(255),
+    opponent_score int,
+    team_id bigint,
+    foreign key (team_id) references team(id)
 );
 
-CREATE TABLE ATTENDANCE (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    statusType VARCHAR(255),
-    account_id BIGINT,
-    event_id BIGINT,
-    match_id BIGINT,
-    FOREIGN KEY (account_id) REFERENCES ACCOUNT(id),
-    FOREIGN KEY (event_id) REFERENCES EVENT(id),
-    FOREIGN KEY (match_id) REFERENCES MATCH(id)
+create table attendance (
+    id bigint primary key auto_increment,
+    status_type varchar(255),
+    account_id bigint,
+    event_id bigint,
+    match_id bigint,
+    foreign key (account_id) references account(id),
+    foreign key (event_id) references event(id),
+    foreign key (match_id) references match(id)
 );
 
-CREATE TABLE FILE (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255),
-    uploadDate DATE,
-    type VARCHAR(31)
+create table file (
+    id bigint primary key auto_increment,
+    name varchar(255),
+    upload_date date,
+    type varchar(31)
 );
+-- document and image use file table with type discriminator

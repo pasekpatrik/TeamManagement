@@ -10,9 +10,10 @@ import lombok.Setter;
 @Setter
 public class Role extends AbstractEntity {
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role_type", nullable = false)
     private RoleType roleType;
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
     private Account account;
 }

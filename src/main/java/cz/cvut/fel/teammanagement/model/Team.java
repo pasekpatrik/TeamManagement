@@ -11,17 +11,20 @@ import java.util.List;
 @Getter
 @Setter
 public class Team extends AbstractEntity{
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(nullable = false)
+    @Column(name = "sport_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private SportType sportType;
 
     @ManyToMany
+    @JoinTable(name = "account_team",
+        joinColumns = @JoinColumn(name = "team_id"),
+        inverseJoinColumns = @JoinColumn(name = "account_id"))
     private List<Account> accounts;
 
     @OneToMany

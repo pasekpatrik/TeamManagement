@@ -15,18 +15,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends AbstractEntity {
-    @Column(nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
-    
-    @Column(nullable = false, unique = true)
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "phone")
     private String phone;
 
-    @Column(nullable = false)
+    @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
 
     @ManyToMany(mappedBy = "accounts")
@@ -38,3 +39,4 @@ public class Account extends AbstractEntity {
     @OneToMany(mappedBy = "account")
     private List<Attendance> attendances;
 }
+

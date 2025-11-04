@@ -2,6 +2,7 @@ package cz.cvut.fel.teammanagement.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -15,31 +16,32 @@ import java.util.List;
 @Getter
 @Setter
 public class Match extends AbstractEntity {
-    @Column(nullable = false)
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(nullable = false)
+    @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(nullable = false)
+    @Column(name = "team_score", nullable = false)
     private int teamScore;
 
-    @Column(nullable = false)
+    @Column(name = "opponent_name", nullable = false)
     private String opponentName;
 
-    @Column(nullable = false)
+    @Column(name = "opponent_phone", nullable = false)
     private String opponentPhone;
 
-    @Column(nullable = false)
+    @Column(name = "opponent_score", nullable = false)
     private int opponentScore;
 
     @ManyToOne
+    @JoinColumn(name = "team_id")
     private Team team;
 
     @OneToMany(mappedBy = "match")
