@@ -3,6 +3,7 @@ package cz.cvut.fel.teammanagement.service;
 import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.model.Attendance;
 import cz.cvut.fel.teammanagement.model.Account;
+import cz.cvut.fel.teammanagement.enums.StatusType;
 import cz.cvut.fel.teammanagement.repository.EventDAO;
 import cz.cvut.fel.teammanagement.repository.AttendanceDAO;
 import cz.cvut.fel.teammanagement.repository.AccountDAO;
@@ -26,12 +27,12 @@ public class EventService {
     }
 
     @Transactional
-    public boolean addAttendanceToEvent(Long eventId, Long accountId, Attendance attendance) {
-        Event event = eventDAO.find(eventId);
-        Account account = accountDAO.find(accountId);
-        if (event != null && account != null) {
+    public boolean addAttendanceToEvent(Event event, Account account, StatusType statusType) {
+        if (event != null && account != null && statusType != null) {
+            Attendance attendance = new Attendance();
             attendance.setEvent(event);
             attendance.setAccount(account);
+            attendance.setStatusType(statusType);
             attendanceDAO.persist(attendance);
             return true;
         }

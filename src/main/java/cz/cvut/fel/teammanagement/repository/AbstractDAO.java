@@ -66,4 +66,11 @@ public abstract class AbstractDAO<T extends AbstractEntity> {
             throw new PersistenceException(e);
         }
     }
+
+    public void delete(T entity) {
+        if (entity != null) {
+            T managed = em.contains(entity) ? entity : em.merge(entity);
+            em.remove(managed);
+        }
+    }
 }

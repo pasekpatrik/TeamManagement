@@ -40,5 +40,30 @@ public class AttendanceService {
         attendanceDAO.persist(attendance);
         return true;
     }
-}
 
+    public Attendance createAttendance(Attendance attendance) {
+        attendanceDAO.persist(attendance);
+        return attendance;
+    }
+
+    public Attendance getAttendanceById(Long id) {
+        return attendanceDAO.find(id);
+    }
+
+    public List<Attendance> getAllAttendances() {
+        return attendanceDAO.findAll();
+    }
+
+    public Attendance updateAttendance(Attendance attendance) {
+        return attendanceDAO.update(attendance);
+    }
+
+    public boolean deleteAttendance(Long id) {
+        Attendance attendance = attendanceDAO.find(id);
+        if (attendance != null) {
+            attendanceDAO.delete(attendance);
+            return true;
+        }
+        return false;
+    }
+}

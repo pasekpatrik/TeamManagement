@@ -16,11 +16,4 @@ public class AttendanceDAO extends AbstractDAO<Attendance> {
                 .setParameter("eventId", eventId)
                 .getResultList();
     }
-
-    public void delete(Attendance attendance) {
-        if (attendance != null) {
-            Attendance managed = em.contains(attendance) ? attendance : em.merge(attendance);
-            em.remove(managed);
-        }
-    }
 }

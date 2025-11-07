@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement.service;
 
+import cz.cvut.fel.teammanagement.exceptions.NoEntityFoundException;
 import cz.cvut.fel.teammanagement.model.Account;
 import cz.cvut.fel.teammanagement.model.Team;
 import cz.cvut.fel.teammanagement.model.Attendance;
@@ -50,7 +51,8 @@ public class AccountService {
     public Account findAccountByEmail(String email) {
         return accountDAO.findAll().stream()
             .filter(acc -> acc.getEmail().equalsIgnoreCase(email))
-            .findFirst().orElse(null);
+            .findFirst()
+            .orElseThrow(() -> new NoEntityFoundException("No account with email " + email));
     }
 
     @Transactional(readOnly = true)
