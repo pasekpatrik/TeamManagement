@@ -8,4 +8,11 @@ public class AccountDAO extends AbstractDAO<Account> {
     public AccountDAO() {
         super(Account.class);
     }
+
+    public void delete(Account account) {
+        if (account != null) {
+            Account managed = em.contains(account) ? account : em.merge(account);
+            em.remove(managed);
+        }
+    }
 }

@@ -81,4 +81,3 @@ create table file (
     upload_date date,
     type varchar(31)
 );
--- document and image use file table with type discriminator

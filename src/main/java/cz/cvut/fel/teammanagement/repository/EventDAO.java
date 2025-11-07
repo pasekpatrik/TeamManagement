@@ -11,12 +11,4 @@ public class EventDAO extends AbstractDAO<Event> {
     public EventDAO() {
         super(Event.class);
     }
-
-    public void addAttendance(Account account, Event event, StatusType statusType) {
-        Attendance attendance = new Attendance();
-        attendance.setAccount(account);
-        attendance.setEvent(event);
-        attendance.setStatusType(statusType);
-        em.persist(attendance);
-    }
 }
