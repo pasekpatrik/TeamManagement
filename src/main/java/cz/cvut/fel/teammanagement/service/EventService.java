@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement.service;
 
+import cz.cvut.fel.teammanagement.exceptions.IncorrectTeamException;
 import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.model.Attendance;
 import cz.cvut.fel.teammanagement.model.Account;
@@ -30,6 +31,9 @@ public class EventService extends AbstractService<Event> {
     @Transactional
     public boolean addAttendanceToEvent(Event event, Account account, StatusType statusType) {
         if (event != null && account != null && statusType != null) {
+            if(!event.getTeam().getAccounts().contains(account)) {
+                throw new IncorrectTeamException("Account does not belong to the team associated with the event.");
+            }
             Attendance attendance = new Attendance();
             attendance.setEvent(event);
             attendance.setAccount(account);
@@ -49,8 +53,7 @@ public class EventService extends AbstractService<Event> {
     }
 
     @Transactional(readOnly = true)
-    public List<Event> getEventsForAccount(Long accountId) {
-        Account account = accountDAO.find(accountId);
+    public List<Event> getEventsForAccount(Account account) {
         return account != null ? account.getAttendances().stream().map(Attendance::getEvent).toList() : List.of();
     }
 

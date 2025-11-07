@@ -41,4 +41,13 @@ public class AttendanceService extends AbstractService<Attendance> {
         attendanceDAO.persist(attendance);
         return true;
     }
+
+    public boolean changeAttendanceStatus(Attendance attendance, StatusType newStatus) {
+        if (attendance != null && newStatus != null) {
+            attendance.setStatusType(newStatus);
+            attendanceDAO.update(attendance);
+            return true;
+        }
+        return false;
+    }
 }
