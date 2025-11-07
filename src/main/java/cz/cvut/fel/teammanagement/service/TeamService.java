@@ -13,12 +13,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class TeamService {
+public class TeamService extends AbstractService<Team> {
     private final TeamDAO teamDAO;
     private final AccountDAO accountDAO;
 
     @Autowired
     public TeamService(TeamDAO teamDAO, AccountDAO accountDAO) {
+        super(teamDAO);
         this.teamDAO = teamDAO;
         this.accountDAO = accountDAO;
     }

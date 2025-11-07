@@ -13,38 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class AccountService {
+public class AccountService extends AbstractService<Account> {
     private final AccountDAO accountDAO;
 
     @Autowired
     public AccountService(AccountDAO accountDAO) {
+        super(accountDAO);
         this.accountDAO = accountDAO;
-    }
-
-    @Transactional
-    public Account createAccount(Account account) {
-        accountDAO.persist(account);
-        return account;
-    }
-
-    @Transactional
-    public Account updateAccount(Account account) {
-        return accountDAO.update(account);
-    }
-
-    @Transactional
-    public boolean deleteAccount(Long accountId) {
-        Account account = accountDAO.find(accountId);
-        if (account != null) {
-            accountDAO.delete(account);
-            return true;
-        }
-        return false;
-    }
-
-    @Transactional(readOnly = true)
-    public Account findAccountById(Long accountId) {
-        return accountDAO.find(accountId);
     }
 
     @Transactional(readOnly = true)

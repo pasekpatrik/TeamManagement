@@ -1,7 +1,6 @@
 package cz.cvut.fel.teammanagement.service;
 
 import cz.cvut.fel.teammanagement.model.Role;
-import cz.cvut.fel.teammanagement.model.Account;
 import cz.cvut.fel.teammanagement.repository.RoleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,43 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class RoleService {
+public class RoleService extends AbstractService<Role> {
     private final RoleDAO roleDAO;
 
     @Autowired
     public RoleService(RoleDAO roleDAO) {
+        super(roleDAO);
         this.roleDAO = roleDAO;
-    }
-
-    @Transactional
-    public Role createRole(Role role) {
-        roleDAO.persist(role);
-        return role;
-    }
-
-    @Transactional(readOnly = true)
-    public Role findRoleById(Long id) {
-        return roleDAO.find(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Role> getAllRoles() {
-        return roleDAO.findAll();
-    }
-
-    @Transactional
-    public Role updateRole(Role role) {
-        return roleDAO.update(role);
-    }
-
-    @Transactional
-    public boolean deleteRole(Long id) {
-        Role role = roleDAO.find(id);
-        if (role != null) {
-            roleDAO.delete(role);
-            return true;
-        }
-        return false;
     }
 
     @Transactional(readOnly = true)
@@ -63,4 +32,3 @@ public class RoleService {
             .count();
     }
 }
-

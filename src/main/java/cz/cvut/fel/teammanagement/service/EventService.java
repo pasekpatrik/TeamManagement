@@ -14,13 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class EventService {
+public class EventService extends AbstractService<Event> {
     private final EventDAO eventDAO;
     private final AttendanceDAO attendanceDAO;
     private final AccountDAO accountDAO;
 
     @Autowired
     public EventService(EventDAO eventDAO, AttendanceDAO attendanceDAO, AccountDAO accountDAO) {
+        super(eventDAO);
         this.eventDAO = eventDAO;
         this.attendanceDAO = attendanceDAO;
         this.accountDAO = accountDAO;
@@ -37,12 +38,6 @@ public class EventService {
             return true;
         }
         return false;
-    }
-
-    @Transactional
-    public Event createEvent(Event event) {
-        eventDAO.persist(event);
-        return event;
     }
 
     @Transactional(readOnly = true)

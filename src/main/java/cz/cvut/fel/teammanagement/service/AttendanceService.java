@@ -13,12 +13,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-public class AttendanceService {
+public class AttendanceService extends AbstractService<Attendance> {
     private final AttendanceDAO attendanceDAO;
     private final EventDAO eventDAO;
 
     @Autowired
     public AttendanceService(AttendanceDAO attendanceDAO, EventDAO eventDAO) {
+        super(attendanceDAO);
         this.attendanceDAO = attendanceDAO;
         this.eventDAO = eventDAO;
     }
@@ -39,31 +40,5 @@ public class AttendanceService {
         attendance.setStatusType(statusType);
         attendanceDAO.persist(attendance);
         return true;
-    }
-
-    public Attendance createAttendance(Attendance attendance) {
-        attendanceDAO.persist(attendance);
-        return attendance;
-    }
-
-    public Attendance getAttendanceById(Long id) {
-        return attendanceDAO.find(id);
-    }
-
-    public List<Attendance> getAllAttendances() {
-        return attendanceDAO.findAll();
-    }
-
-    public Attendance updateAttendance(Attendance attendance) {
-        return attendanceDAO.update(attendance);
-    }
-
-    public boolean deleteAttendance(Long id) {
-        Attendance attendance = attendanceDAO.find(id);
-        if (attendance != null) {
-            attendanceDAO.delete(attendance);
-            return true;
-        }
-        return false;
     }
 }
