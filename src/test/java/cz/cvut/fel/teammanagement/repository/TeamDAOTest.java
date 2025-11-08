@@ -65,9 +65,9 @@ public class TeamDAOTest {
 
         List<Team> teams = teamDAO.findTeamsByType(FOOTBALL);
 
-        for (Team oneTeam : teams) {
-            Assertions.assertEquals(type, oneTeam.getSportType());
-        }
+        Assertions.assertFalse(teams.isEmpty());
+        Assertions.assertEquals(1, teams.size());
+        Assertions.assertEquals(type, teams.get(0).getSportType());
     }
 
     @Test
@@ -93,6 +93,9 @@ public class TeamDAOTest {
         }
 
         List<Team> teams = teamDAO.findTeamsByType(FOOTBALL);
+
+        Assertions.assertFalse(teams.isEmpty());
+        Assertions.assertEquals(numberOfTeams, teams.size());
 
         for (Team oneTeam : teams) {
             Assertions.assertEquals(type, oneTeam.getSportType());

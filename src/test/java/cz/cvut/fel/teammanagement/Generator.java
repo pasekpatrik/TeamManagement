@@ -2,10 +2,7 @@ package cz.cvut.fel.teammanagement;
 
 import cz.cvut.fel.teammanagement.model.Account;
 import cz.cvut.fel.teammanagement.model.Team;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static cz.cvut.fel.teammanagement.enums.SportType.FOOTBALL;
