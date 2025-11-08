@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Team extends AbstractEntity{
+public class Team extends AbstractEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
