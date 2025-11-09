@@ -5,6 +5,7 @@ import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.model.Attendance;
 import cz.cvut.fel.teammanagement.model.Account;
 import cz.cvut.fel.teammanagement.enums.StatusType;
+import cz.cvut.fel.teammanagement.repository.AccountDAO;
 import cz.cvut.fel.teammanagement.repository.EventDAO;
 import cz.cvut.fel.teammanagement.repository.AttendanceDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +18,26 @@ import java.util.List;
 public class EventService extends AbstractService<Event> {
     private final EventDAO eventDAO;
     private final AttendanceDAO attendanceDAO;
+    private final AccountService accountService;
+    private final AccountDAO accountDAO;
 
     @Autowired
-    public EventService(EventDAO eventDAO, AttendanceDAO attendanceDAO) {
+    public EventService(EventDAO eventDAO, AttendanceDAO attendanceDAO, AccountService accountService, AccountDAO accountDAO) {
         super(eventDAO);
         this.eventDAO = eventDAO;
         this.attendanceDAO = attendanceDAO;
+        this.accountService = accountService;
+        this.accountDAO = accountDAO;
     }
 
     @Transactional
-    public boolean addAttendanceToEvent(Event event, Account account, StatusType statusType) {
-        if (event == null || account == null || statusType == null) {
+    public boolean addAttendanceToEvent(Long eventId, Long accountId, StatusType statusType) {
+
+
+        Event event = getById(eventId);
+        Account account = accountService.getById(accountId);
+
+        if ( event == null || account == null || statusType == null) {
             return false;
         }
 
@@ -47,8 +57,12 @@ public class EventService extends AbstractService<Event> {
         attendance.setAccount(account);
         attendance.setStatusType(statusType);
         attendanceDAO.persist(attendance);
-        event.getAttendances().add(attendance);
-        account.setAttendances(event.getAttendances());
+
+        event.addAttendance(attendance);
+        eventDAO.persist(event);
+
+        account.addAttandance(attendance);
+        accountDAO.persist(account);
         return true;
     }
 

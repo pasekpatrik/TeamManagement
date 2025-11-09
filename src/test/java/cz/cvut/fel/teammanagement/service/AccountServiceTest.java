@@ -27,9 +27,6 @@ public class AccountServiceTest {
     private AccountDAO accountDAO;
 
     private Account account;
-    private Team team;
-    private Event event;
-    private Attendance attendance;
 
     @BeforeEach
     void setUp() {

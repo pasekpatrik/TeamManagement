@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,6 +38,17 @@ public class Account extends AbstractEntity {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "account")
-    private List<Attendance> attendances;
+    private List<Attendance> attendances = new ArrayList<>();
+
+    public void setAttendances(List<Attendance> attendances) {
+        this.attendances.clear();
+        if (attendances != null) {
+            this.attendances.addAll(attendances);
+        }
+    }
+
+    public void addAttandance(Attendance attendance) {
+        attendances.add(attendance);
+    }
 }
 

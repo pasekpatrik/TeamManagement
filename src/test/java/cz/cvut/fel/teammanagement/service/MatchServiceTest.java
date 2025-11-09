@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement.service;
 
+import cz.cvut.fel.teammanagement.enums.SportType;
 import cz.cvut.fel.teammanagement.model.Attendance;
 import cz.cvut.fel.teammanagement.model.Document;
 import cz.cvut.fel.teammanagement.model.Match;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,11 +37,19 @@ public class MatchServiceTest {
     void setUp() {
         team = new Team();
         team.setName("Test Team");
+        team.setCity("Test City");
+        team.setSportType(SportType.HOCKEY);
         teamDAO.persist(team);
 
         match = new Match();
         match.setTeam(team);
         match.setStartDate(LocalDate.now().plusDays(5));
+        match.setAddress("Test st 123");
+        match.setCity("Test City");
+        match.setOpponentName("Test Opponent");
+        match.setOpponentPhone("123123123");
+        match.setStartDate(LocalDate.now().plusDays(5));
+        match.setStartTime(LocalTime.now().plusHours(1));
         matchDAO.persist(match);
     }
 

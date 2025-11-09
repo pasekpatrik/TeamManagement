@@ -23,6 +23,9 @@ public class Event extends AbstractEntity {
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
+    @Column(name = "city", nullable = false)
+    private String City;
+
     @Column(name = "address", nullable = false)
     private String address;
 
@@ -34,10 +37,17 @@ public class Event extends AbstractEntity {
     @JoinColumn(name = "team_id")
     private Team team;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event")
     private List<Attendance> attendances = new ArrayList<>();
 
     public void setAttendances(List<Attendance> attendances) {
-        this.attendances = (attendances == null) ? new ArrayList<>() : new ArrayList<>(attendances);
+        this.attendances.clear();
+        if (attendances != null) {
+            this.attendances.addAll(attendances);
+        }
+    }
+
+    public void addAttendance(Attendance attendance) {
+        attendances.add(attendance);
     }
 }

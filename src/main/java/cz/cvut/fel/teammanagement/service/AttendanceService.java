@@ -4,6 +4,7 @@ import cz.cvut.fel.teammanagement.model.Account;
 import cz.cvut.fel.teammanagement.model.Attendance;
 import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.enums.StatusType;
+import cz.cvut.fel.teammanagement.repository.AccountDAO;
 import cz.cvut.fel.teammanagement.repository.AttendanceDAO;
 import cz.cvut.fel.teammanagement.repository.EventDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +18,19 @@ public class AttendanceService extends AbstractService<Attendance> {
     private final AttendanceDAO attendanceDAO;
     private final EventDAO eventDAO;
     private final EventService eventService;
+    private final AccountDAO accountDAO;
 
     @Autowired
-    public AttendanceService(AttendanceDAO attendanceDAO, EventDAO eventDAO, EventService eventService) {
+    public AttendanceService(AttendanceDAO attendanceDAO, EventDAO eventDAO, EventService eventService, AccountDAO accountDAO) {
         super(attendanceDAO);
         this.attendanceDAO = attendanceDAO;
         this.eventDAO = eventDAO;
         this.eventService = eventService;
+        this.accountDAO = accountDAO;
     }
 
     public boolean registerAttendance(Account account, Event event, StatusType statusType) {
-        if (event.getStartDate().isBefore(LocalDate.now())) {
+        if (event.getStartDate().isAfter(LocalDate.now())) {
             return false;
         }
 
@@ -42,9 +45,10 @@ public class AttendanceService extends AbstractService<Attendance> {
         attendance.setEvent(event);
         attendance.setStatusType(statusType);
         attendanceDAO.persist(attendance);
-        attendances = eventService.findAttendancesByEventId(event.getId());
-        account.setAttendances(attendances);
-        event.setAttendances(attendances);
+        account.addAttandance(attendance);
+        accountDAO.persist(account);
+        event.addAttendance(attendance);
+        eventDAO.persist(event);
         return true;
     }
 

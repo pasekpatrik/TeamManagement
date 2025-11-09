@@ -31,6 +31,8 @@ public class MatchService extends AbstractService<Match> {
     @Transactional(readOnly = true)
     public List<Attendance> getAttendancesForMatch(Long matchId) {
         Match match = matchDAO.find(matchId);
+
+
         return match != null && match.getAttendances() != null ? match.getAttendances() : List.of();
     }
 }

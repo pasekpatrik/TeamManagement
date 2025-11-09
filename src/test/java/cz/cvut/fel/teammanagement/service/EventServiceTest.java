@@ -35,13 +35,13 @@ public class EventServiceTest {
     @Autowired
     private AccountDAO accountDAO;
     @Autowired
-    private AttendanceDAO attendanceDAO;
-    @Autowired
     private TeamDAO teamDAO;
 
     private Team team;
     private Account account;
     private Event event;
+    @Autowired
+    private AccountService accountService;
 
     @BeforeEach
     void setUp() {
@@ -64,6 +64,7 @@ public class EventServiceTest {
         event = new Event();
         event.setName("Test Event");
         event.setTeam(team);
+        event.setCity("Test City");
         event.setAddress("123 Test St");
         event.setEventType(EventType.TRAINING);
         event.setStartDate(LocalDate.now().plusDays(1));
@@ -74,7 +75,7 @@ public class EventServiceTest {
 
     @Test
     void testAddAttendanceToEvent_success() {
-        boolean result = eventService.addAttendanceToEvent(event, account, StatusType.PRESENT);
+        boolean result = eventService.addAttendanceToEvent(event.getId(), account.getId(), StatusType.PRESENT);
         assertTrue(result);
         List<Attendance> attendances = eventService.findAttendancesByEventId(event.getId());
         assertEquals(1, attendances.size());
@@ -89,12 +90,12 @@ public class EventServiceTest {
         outsider.setEmail("outsider@test.com");
         outsider.setBirthday(LocalDate.of(1990, 1, 1));
         accountDAO.persist(outsider);
-        assertThrows(IncorrectTeamException.class, () -> eventService.addAttendanceToEvent(event, outsider, StatusType.PRESENT));
+        assertThrows(IncorrectTeamException.class, () -> eventService.addAttendanceToEvent(event.getId(), outsider.getId(), StatusType.PRESENT));
     }
 
     @Test
     void testGetEventAttendances() {
-        eventService.addAttendanceToEvent(event, account, StatusType.PRESENT);
+        eventService.addAttendanceToEvent(event.getId(), account.getId(), StatusType.PRESENT);
         List<Account> accounts = eventService.getEventAttendances(event.getId());
         assertEquals(1, accounts.size());
         assertEquals(account.getId(), accounts.get(0).getId());
@@ -102,7 +103,7 @@ public class EventServiceTest {
 
     @Test
     void testGetEventsForAccount() {
-        eventService.addAttendanceToEvent(event, account, StatusType.PRESENT);
+        eventService.addAttendanceToEvent(event.getId(), account.getId(), StatusType.PRESENT);
         List<Event> events = eventService.getEventsForAccount(account);
         assertEquals(1, events.size());
         assertEquals(event.getId(), events.get(0).getId());
@@ -110,13 +111,19 @@ public class EventServiceTest {
 
     @Test
     void testRemoveAttendanceFromEvent() {
-        eventService.addAttendanceToEvent(event, account, StatusType.PRESENT);
+        eventService.addAttendanceToEvent(event.getId(), account.getId(), StatusType.PRESENT);
         List<Attendance> attendances = eventService.findAttendancesByEventId(event.getId());
         assertEquals(1, attendances.size());
+        Event beforeEvent = eventService.getById(event.getId());
+        assertFalse(beforeEvent.getAttendances().isEmpty());
+
         boolean removed = eventService.removeAttendanceFromEvent(attendances.get(0).getId());
         assertTrue(removed);
         List<Attendance> after = eventService.findAttendancesByEventId(event.getId());
         assertTrue(after.isEmpty());
+
+        Event afterEvent = eventService.getById(event.getId());
+        assertTrue(afterEvent.getAttendances().isEmpty());
     }
 }
 

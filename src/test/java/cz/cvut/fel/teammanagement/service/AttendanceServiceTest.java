@@ -31,8 +31,6 @@ public class AttendanceServiceTest {
     private AccountDAO accountDAO;
     @Autowired
     private EventDAO eventDAO;
-    @Autowired
-    private AttendanceDAO attendanceDAO;
 
     @Autowired
     private EventService eventService;
@@ -40,6 +38,7 @@ public class AttendanceServiceTest {
     private Account account;
     private Event futureEvent;
     private Event pastEvent;
+    private Event todayEvent;
 
     @BeforeEach
     void setUp() {
@@ -56,6 +55,7 @@ public class AttendanceServiceTest {
         futureEvent.setStartTime(NOON);
         futureEvent.setAddress("Address");
         futureEvent.setEventType(TRAINING);
+        futureEvent.setCity("Test City");
         eventDAO.persist(futureEvent);
 
         pastEvent = new Event();
@@ -64,33 +64,43 @@ public class AttendanceServiceTest {
         pastEvent.setStartTime(NOON);
         pastEvent.setAddress("Address");
         pastEvent.setEventType(TRAINING);
+        pastEvent.setCity("Test City");
         eventDAO.persist(pastEvent);
+
+        todayEvent = new Event();
+        todayEvent.setName("Past Event");
+        todayEvent.setStartDate(LocalDate.now());
+        todayEvent.setStartTime(NOON);
+        todayEvent.setAddress("Address");
+        todayEvent.setEventType(TRAINING);
+        todayEvent.setCity("Test City");
+        eventDAO.persist(todayEvent);
     }
 
     @Test
     void testRegisterAttendanceForFutureEvent() {
         boolean result = attendanceService.registerAttendance(account, futureEvent, PRESENT);
-        assertTrue(result);
-        List<Attendance> attendances = eventService.findAttendancesByEventId(futureEvent.getId());
-        assertEquals(1, attendances.size());
-        assertEquals(account.getId(), attendances.get(0).getAccount().getId());
-    }
-
-    @Test
-    void testRegisterAttendanceForPastEventFails() {
-        boolean result = attendanceService.registerAttendance(account, pastEvent, PRESENT);
         assertFalse(result);
         List<Attendance> attendances = eventService.findAttendancesByEventId(pastEvent.getId());
         assertEquals(0, attendances.size());
     }
 
     @Test
+    void testRegisterAttendanceForPastEventFails() {
+        boolean result = attendanceService.registerAttendance(account, pastEvent, PRESENT);
+        assertTrue(result);
+        List<Attendance> attendances = eventService.findAttendancesByEventId(pastEvent.getId());
+        assertEquals(1, attendances.size());
+        assertEquals(account.getId(), attendances.get(0).getAccount().getId());
+    }
+
+    @Test
     void testRegisterDuplicateAttendanceFails() {
-        boolean first = attendanceService.registerAttendance(account, futureEvent, PRESENT);
-        boolean second = attendanceService.registerAttendance(account, futureEvent, PRESENT);
+        boolean first = attendanceService.registerAttendance(account, pastEvent, PRESENT);
+        boolean second = attendanceService.registerAttendance(account, pastEvent, PRESENT);
         assertTrue(first);
         assertFalse(second);
-        List<Attendance> attendances = eventService.findAttendancesByEventId(futureEvent.getId());
+        List<Attendance> attendances = eventService.findAttendancesByEventId(pastEvent.getId());
         assertEquals(1, attendances.size());
     }
 
@@ -102,12 +112,26 @@ public class AttendanceServiceTest {
         another.setEmail("another@example.com");
         another.setBirthday(LocalDate.of(1995, 5, 5));
         accountDAO.persist(another);
-        boolean first = attendanceService.registerAttendance(account, futureEvent, PRESENT);
-        boolean second = attendanceService.registerAttendance(another, futureEvent, PRESENT);
+        boolean first = attendanceService.registerAttendance(account, pastEvent, PRESENT);
+        boolean second = attendanceService.registerAttendance(another, pastEvent, PRESENT);
         assertTrue(first);
         assertTrue(second);
-        List<Attendance> attendances = eventService.findAttendancesByEventId(futureEvent.getId());
+        List<Attendance> attendances = eventService.findAttendancesByEventId(pastEvent.getId());
         assertEquals(2, attendances.size());
+    }
+
+    @Test
+    void testRegisterAttendanceTodaysDate() {
+        Account another = new Account();
+        another.setFirstName("Another");
+        another.setLastName("User");
+        another.setEmail("another@example.com");
+        another.setBirthday(LocalDate.of(1995, 5, 5));
+        accountDAO.persist(another);
+        boolean first = attendanceService.registerAttendance(account, todayEvent, PRESENT);
+        assertTrue(first);
+        List<Attendance> attendances = eventService.findAttendancesByEventId(todayEvent.getId());
+        assertEquals(1, attendances.size());
     }
 }
 
