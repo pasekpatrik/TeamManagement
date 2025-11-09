@@ -16,19 +16,22 @@ import java.util.List;
 public class AttendanceService extends AbstractService<Attendance> {
     private final AttendanceDAO attendanceDAO;
     private final EventDAO eventDAO;
+    private final EventService eventService;
 
     @Autowired
-    public AttendanceService(AttendanceDAO attendanceDAO, EventDAO eventDAO) {
+    public AttendanceService(AttendanceDAO attendanceDAO, EventDAO eventDAO, EventService eventService) {
         super(attendanceDAO);
         this.attendanceDAO = attendanceDAO;
         this.eventDAO = eventDAO;
+        this.eventService = eventService;
     }
 
     public boolean registerAttendance(Account account, Event event, StatusType statusType) {
         if (event.getStartDate().isBefore(LocalDate.now())) {
             return false;
         }
-        List<Attendance> attendances = attendanceDAO.findByEventId(event.getId());
+
+        List<Attendance> attendances = eventService.findAttendancesByEventId(event.getId());
         boolean alreadyRegistered = attendances.stream()
             .anyMatch(a -> a.getAccount().getId().equals(account.getId()));
         if (alreadyRegistered) {
@@ -39,6 +42,9 @@ public class AttendanceService extends AbstractService<Attendance> {
         attendance.setEvent(event);
         attendance.setStatusType(statusType);
         attendanceDAO.persist(attendance);
+        attendances = eventService.findAttendancesByEventId(event.getId());
+        account.setAttendances(attendances);
+        event.setAttendances(attendances);
         return true;
     }
 

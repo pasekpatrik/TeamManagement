@@ -1,0 +1,73 @@
+package cz.cvut.fel.teammanagement.service;
+
+import cz.cvut.fel.teammanagement.model.Attendance;
+import cz.cvut.fel.teammanagement.model.Document;
+import cz.cvut.fel.teammanagement.model.Match;
+import cz.cvut.fel.teammanagement.model.Team;
+import cz.cvut.fel.teammanagement.repository.DocumentDAO;
+import cz.cvut.fel.teammanagement.repository.MatchDAO;
+import cz.cvut.fel.teammanagement.repository.TeamDAO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+@Transactional
+public class MatchServiceTest {
+    @Autowired
+    private MatchService matchService;
+    @Autowired
+    private MatchDAO matchDAO;
+    @Autowired
+    private TeamDAO teamDAO;
+
+    private Team team;
+    private Match match;
+
+    @BeforeEach
+    void setUp() {
+        team = new Team();
+        team.setName("Test Team");
+        teamDAO.persist(team);
+
+        match = new Match();
+        match.setTeam(team);
+        match.setStartDate(LocalDate.now().plusDays(5));
+        matchDAO.persist(match);
+    }
+
+    @Test
+    void testFindFutureMatchesForTeam_found() {
+        List<Match> matches = matchService.findFutureMatchesForTeam(team.getId(), LocalDate.now());
+        assertFalse(matches.isEmpty());
+        assertEquals(match.getId(), matches.get(0).getId());
+    }
+
+    @Test
+    void testFindFutureMatchesForTeam_none() {
+        List<Match> matches = matchService.findFutureMatchesForTeam(team.getId(), LocalDate.now().plusDays(10));
+        assertNotNull(matches);
+        assertTrue(matches.isEmpty());
+    }
+
+    @Test
+    void testGetAttendancesForMatch_empty() {
+        List<Attendance> attendances = matchService.getAttendancesForMatch(match.getId());
+        assertNotNull(attendances);
+        assertTrue(attendances.isEmpty());
+    }
+
+    @Test
+    void testGetAttendancesForMatch_nullMatch() {
+        List<Attendance> attendances = matchService.getAttendancesForMatch(-1L);
+        assertNotNull(attendances);
+        assertTrue(attendances.isEmpty());
+    }
+}

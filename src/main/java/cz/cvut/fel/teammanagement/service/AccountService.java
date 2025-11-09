@@ -25,9 +25,9 @@ public class AccountService extends AbstractService<Account> {
     @Transactional(readOnly = true)
     public Account findAccountByEmail(String email) {
         return accountDAO.findAll().stream()
-            .filter(acc -> acc.getEmail().equalsIgnoreCase(email))
-            .findFirst()
-            .orElseThrow(() -> new NoEntityFoundException("No account with email " + email));
+                .filter(acc -> acc.getEmail().equalsIgnoreCase(email))
+                .findFirst()
+                .orElseThrow(() -> new NoEntityFoundException("No account with email " + email));
     }
 
     @Transactional(readOnly = true)
@@ -38,13 +38,19 @@ public class AccountService extends AbstractService<Account> {
     @Transactional(readOnly = true)
     public List<Team> getTeamsForAccount(Long accountId) {
         Account account = accountDAO.find(accountId);
-        return account != null ? account.getTeams() : List.of();
+        if (account == null) {
+            throw new NoEntityFoundException("No account with id " + accountId);
+        }
+        return account.getTeams();
     }
 
     @Transactional(readOnly = true)
     public List<Event> getAttendancesForAccount(Long accountId) {
         Account account = accountDAO.find(accountId);
-        return account != null && account.getAttendances() != null
+        if (account == null) {
+            throw new NoEntityFoundException("No account with id " + accountId);
+        }
+        return account.getAttendances() != null
             ? account.getAttendances().stream().map(Attendance::getEvent).toList()
             : List.of();
     }
