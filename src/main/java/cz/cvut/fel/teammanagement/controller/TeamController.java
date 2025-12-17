@@ -47,7 +47,6 @@ public class TeamController {
 
         TeamDTO response = new TeamDTO(saved.getId(), saved.getName(), saved.getCity(), saved.getSportType());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
     }
 
     @PutMapping("/{teamId}")
