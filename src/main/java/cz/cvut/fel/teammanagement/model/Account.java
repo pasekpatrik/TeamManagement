@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement.model;
 
+import cz.cvut.fel.teammanagement.dto.AccountDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends AbstractEntity {
+
+    public Account (AccountDTO accountDTO) {
+        this.firstName = accountDTO.firstName();
+        this.lastName = accountDTO.lastName();
+        this.email = accountDTO.email();
+        this.phone = accountDTO.phone();
+        this.birthday = accountDTO.birthday();
+    }
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 

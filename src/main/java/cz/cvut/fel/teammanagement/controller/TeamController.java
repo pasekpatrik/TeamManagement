@@ -21,7 +21,7 @@ public class TeamController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping("/getAllTeams")
     public List<TeamDTO> getAllTeams() {
         List<Team> teams = teamService.getAll();
 
@@ -30,49 +30,49 @@ public class TeamController {
                 .toList();
     }
 
-    @GetMapping("/{id}")
-    public TeamDTO getTeam(@PathVariable long id) {
+    @GetMapping("/getTeam/{id}")
+    public ResponseEntity<TeamDTO> getTeam(@PathVariable long id) {
         Team team = teamService.getById(id);
-        return new TeamDTO(team.getId(), team.getName(), team.getCity(), team.getSportType());
+        if (team == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new TeamDTO(team));
     }
 
-    @PostMapping
+    @PostMapping("/createTeam")
     public ResponseEntity<TeamDTO> createTeam(@RequestBody TeamDTO teamDTO) {
-        Team team = new Team();
-        team.setName(teamDTO.name());
-        team.setCity(teamDTO.city());
-        team.setSportType(teamDTO.sportType());
-
+        Team team = new Team(teamDTO);
         Team saved = teamService.create(team);
-
-        TeamDTO response = new TeamDTO(saved.getId(), saved.getName(), saved.getCity(), saved.getSportType());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new TeamDTO(saved));
     }
 
-    @PutMapping("/{teamId}")
+    @PutMapping("/updateTeam/{teamId}")
     public ResponseEntity<TeamDTO> updateTeam(@PathVariable Long teamId, @RequestBody TeamDTO teamDTO) {
         Team team = teamService.getById(teamId);
+        if (team == null) {
+            return ResponseEntity.notFound().build();
+        }
         team.setName(teamDTO.name());
         team.setCity(teamDTO.city());
         team.setSportType(teamDTO.sportType());
 
         Team update = teamService.update(team);
-        TeamDTO response = new TeamDTO(update.getId(), update.getName(), update.getCity(), update.getSportType());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new TeamDTO(update));
     }
 
-    @DeleteMapping("/{teamId}")
+    @DeleteMapping("/deleteTeam/{teamId}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Long teamId) {
-        teamService.delete(teamId);
-        return ResponseEntity.noContent().build();
+        if (teamService.delete(teamId)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
-    @PatchMapping("/{teamId}/account/{accountId}")
+    @PatchMapping("/addMemberToTeam/{teamId}/account/{accountId}")
     public ResponseEntity<TeamDTO> addMemberToTeam(@PathVariable Long teamId,
                                                    @PathVariable Long accountId) {
         teamService.addMemberToTeam(teamId, accountId);
         Team updated = teamService.getById(teamId);
-        TeamDTO response = new TeamDTO(updated.getId(), updated.getName(), updated.getCity(), updated.getSportType());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new TeamDTO(updated));
     }
 }
