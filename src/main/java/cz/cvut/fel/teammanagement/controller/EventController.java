@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement.controller;
 
+import cz.cvut.fel.teammanagement.dto.AttendanceDTO;
 import cz.cvut.fel.teammanagement.dto.EventDTO;
 import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.service.EventService;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,62 +21,43 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping("/{eventId}")
-    public EventDTO getEvent(@PathVariable Long eventId) {
+    @GetMapping("/getEvent/{eventId}")
+    public ResponseEntity<EventDTO> getEvent(@PathVariable Long eventId) {
         Event event = eventService.getById(eventId);
-        return new EventDTO(event.getId(),
-                event.getName(),
-                event.getStartDate(),
-                event.getStartTime(),
-                event.getCity(),
-                event.getAddress(),
-                event.getEventType());
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new EventDTO(event));
     }
 
-    @GetMapping
-    public List<EventDTO> getAllEvents() {
+    @GetMapping("/getAllEvents")
+    public ResponseEntity<List<EventDTO>> getAllEvents() {
         List<Event> events = eventService.getAll();
 
-        return events.stream()
-                .map(event -> new EventDTO(event.getId(),
-                        event.getName(),
-                        event.getStartDate(),
-                        event.getStartTime(),
-                        event.getCity(),
-                        event.getAddress(),
-                        event.getEventType())
-                )
-                .toList();
+        return ResponseEntity.ok(
+                events.stream()
+                .map(EventDTO::new)
+                .toList());
     }
 
     @PreAuthorize("hasRole('COACH')")
-    @PostMapping
+    @PostMapping("/createEvent")
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        Event event = new Event();
-        event.setName(eventDTO.name());
-        event.setStartDate(eventDTO.startDate());
-        event.setStartTime(eventDTO.startTime());
-        event.setCity(eventDTO.city());
-        event.setAddress(eventDTO.address());
-        event.setEventType(eventDTO.eventType());
+        Event event = new Event(eventDTO);
+        event = eventService.create(event);
 
-        Event saved = eventService.create(event);
+        EventDTO response = new EventDTO(event);
 
-        EventDTO response = new EventDTO(saved.getId(),
-                saved.getName(),
-                saved.getStartDate(),
-                saved.getStartTime(),
-                saved.getCity(),
-                saved.getAddress(),
-                saved.getEventType());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasRole('COACH')")
-    @PutMapping("/{eventId}")
+    @PutMapping("/updateEvent/{eventId}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable Long eventId, @RequestBody EventDTO eventDTO) {
         Event event = eventService.getById(eventId);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
         event.setName(eventDTO.name());
         event.setStartDate(eventDTO.startDate());
         event.setStartTime(eventDTO.startTime());
@@ -83,22 +66,29 @@ public class EventController {
         event.setEventType(eventDTO.eventType());
 
         Event updated = eventService.update(event);
-
-        EventDTO response = new EventDTO(updated.getId(),
-                updated.getName(),
-                updated.getStartDate(),
-                updated.getStartTime(),
-                updated.getCity(),
-                updated.getAddress(),
-                updated.getEventType());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new EventDTO(updated));
     }
 
     @PreAuthorize("hasRole('COACH')")
-    @DeleteMapping("/{eventId}")
+    @DeleteMapping("/deleteEvent/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        eventService.delete(eventId);
-        return ResponseEntity.noContent().build();
+        if(eventService.delete(eventId)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PreAuthorize("hasRole('COACH')")
+    @GetMapping("/getEventAttendances/{eventId}")
+    public ResponseEntity<List<AttendanceDTO>> getEventAttendances(@PathVariable Long eventId) {
+        Event event = eventService.getById(eventId);
+        if (event == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<AttendanceDTO> attendanceDTOS = eventService.findAttendancesByEventId(eventId).stream()
+                .map(AttendanceDTO::new)
+                .toList();
+        return ResponseEntity.ok(attendanceDTOS);
     }
 }

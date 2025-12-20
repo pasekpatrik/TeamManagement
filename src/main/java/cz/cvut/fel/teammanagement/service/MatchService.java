@@ -1,5 +1,6 @@
 package cz.cvut.fel.teammanagement.service;
 
+import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.model.Match;
 import cz.cvut.fel.teammanagement.model.Attendance;
 import cz.cvut.fel.teammanagement.repository.MatchDAO;
@@ -29,10 +30,11 @@ public class MatchService extends AbstractService<Match> {
     }
 
     @Transactional(readOnly = true)
-    public List<Attendance> getAttendancesForMatch(Long matchId) {
+    public List<Attendance> findAttendancesByMatchId(Long matchId) {
         Match match = matchDAO.find(matchId);
-
-
-        return match != null && match.getAttendances() != null ? match.getAttendances() : List.of();
+        if (match != null && match.getAttendances() != null) {
+            return match.getAttendances();
+        }
+        return List.of();
     }
 }

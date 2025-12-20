@@ -1,8 +1,10 @@
 package cz.cvut.fel.teammanagement.model;
 
+import cz.cvut.fel.teammanagement.dto.TeamDTO;
 import cz.cvut.fel.teammanagement.enums.SportType;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -10,7 +12,15 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Team extends AbstractEntity {
+
+    public Team (TeamDTO teamDTO) {
+        this.name = teamDTO.name();
+        this.city = teamDTO.city();
+        this.sportType = teamDTO.sportType();
+    }
+
     @Column(name = "name", nullable = false)
     private String name;
 

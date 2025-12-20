@@ -3,6 +3,7 @@ package cz.cvut.fel.teammanagement.controller;
 import cz.cvut.fel.teammanagement.dto.AccountDTO;
 import cz.cvut.fel.teammanagement.model.Account;
 import cz.cvut.fel.teammanagement.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,56 +21,40 @@ public class AccountController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
-    public List<AccountDTO> getAllAccounts() {
+    @GetMapping("/getAllAccounts")
+    public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         List<Account> accounts = accountService.getAll();
 
-        return accounts.stream()
-                .map(account -> new AccountDTO(account.getId(),
-                        account.getFirstName(),
-                        account.getLastName(),
-                        account.getEmail(),
-                        account.getPhone(),
-                        account.getBirthday()))
-                .toList();
+        return ResponseEntity.ok(accounts.stream()
+                .map(AccountDTO::new)
+                .toList());
     }
 
-    @GetMapping("/{accountId}")
-    public AccountDTO getAccount(@PathVariable Long accountId) {
+    @GetMapping("/getAccount/{accountId}")
+    public ResponseEntity<AccountDTO> getAccount(@PathVariable Long accountId) {
         Account account = accountService.getById(accountId);
+        if(account == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return new AccountDTO(account.getId(),
-                account.getFirstName(),
-                account.getLastName(),
-                account.getEmail(),
-                account.getPhone(),
-                account.getBirthday());
+        return ResponseEntity.ok(new AccountDTO(account));
     }
 
-    @PostMapping
+    @PostMapping("/createAccount")
     public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) {
-        Account account = new Account();
-        account.setFirstName(accountDTO.firstName());
-        account.setLastName(accountDTO.lastName());
-        account.setEmail(accountDTO.email());
-        account.setPhone(accountDTO.phone());
-        account.setBirthday(accountDTO.birthday());
+        Account account = new Account(accountDTO);
+        account = accountService.create(account);
 
-        Account saved = accountService.create(account);
-
-        AccountDTO response = new AccountDTO(saved.getId(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getEmail(),
-                saved.getPhone(),
-                saved.getBirthday());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok(new AccountDTO(account));
     }
 
-    @PutMapping("/{accountId}")
+    @PutMapping("/updateAccount/{accountId}")
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long accountId,@RequestBody AccountDTO accountDTO) {
         Account account = accountService.getById(accountId);
+        if(account == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         account.setFirstName(accountDTO.firstName());
         account.setLastName(accountDTO.lastName());
         account.setEmail(accountDTO.email());
@@ -77,19 +62,14 @@ public class AccountController {
         account.setBirthday(accountDTO.birthday());
 
         Account updated = accountService.update(account);
-        AccountDTO response = new AccountDTO(updated.getId(),
-                updated.getFirstName(),
-                updated.getLastName(),
-                updated.getEmail(),
-                updated.getPhone(),
-                updated.getBirthday());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new AccountDTO(updated));
     }
 
-    @DeleteMapping("/{accountId}")
+    @DeleteMapping("/deleteAccount/{accountId}")
     public ResponseEntity<Void> deleteAccount(@PathVariable Long accountId) {
-        accountService.delete(accountId);
-        return ResponseEntity.noContent().build();
+        if(accountService.delete(accountId)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
