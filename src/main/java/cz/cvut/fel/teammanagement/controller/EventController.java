@@ -4,11 +4,9 @@ import cz.cvut.fel.teammanagement.dto.AttendanceDTO;
 import cz.cvut.fel.teammanagement.dto.EventDTO;
 import cz.cvut.fel.teammanagement.model.Event;
 import cz.cvut.fel.teammanagement.service.EventService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 

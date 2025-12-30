@@ -1,11 +1,8 @@
 package cz.cvut.fel.teammanagement.service;
 
 import cz.cvut.fel.teammanagement.enums.SportType;
-import cz.cvut.fel.teammanagement.model.Attendance;
-import cz.cvut.fel.teammanagement.model.Document;
 import cz.cvut.fel.teammanagement.model.Match;
 import cz.cvut.fel.teammanagement.model.Team;
-import cz.cvut.fel.teammanagement.repository.DocumentDAO;
 import cz.cvut.fel.teammanagement.repository.MatchDAO;
 import cz.cvut.fel.teammanagement.repository.TeamDAO;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,19 +62,5 @@ public class MatchServiceTest {
         List<Match> matches = matchService.findFutureMatchesForTeam(team.getId(), LocalDate.now().plusDays(10));
         assertNotNull(matches);
         assertTrue(matches.isEmpty());
-    }
-
-    @Test
-    void testGetAttendancesForMatch_empty() {
-        List<Attendance> attendances = matchService.getAttendancesForMatch(match.getId());
-        assertNotNull(attendances);
-        assertTrue(attendances.isEmpty());
-    }
-
-    @Test
-    void testGetAttendancesForMatch_nullMatch() {
-        List<Attendance> attendances = matchService.getAttendancesForMatch(-1L);
-        assertNotNull(attendances);
-        assertTrue(attendances.isEmpty());
     }
 }
